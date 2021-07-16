@@ -77,7 +77,7 @@ export class Client {
         const subject = new Subject<UserAccount>();
         const obs: Observable<UserAccount> = subject.asObservable();
 
-        this.socket.on('xact.auth', (user: UserAccount) => {
+        this.socket.on('xact.auth', (clientId, user: UserAccount) => {
             subject.next(user);
         });
 
