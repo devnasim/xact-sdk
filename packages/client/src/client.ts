@@ -37,21 +37,25 @@ export enum ScopeEnum {
 
 export class Client {
     options;
-    clientId: string;
+    socket;
 
     constructor(options: ClientOptions) {
         this.options = options;
+        this.socket = io(SOCKET_URL, {
+            transports: ['websocket']
+        });
     }
 
     /* Generate a QR Code */
     generateQRCode(scope = [ScopeEnum.PROFILE] as Scope): Promise<string> {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
+            const clientId = await this.waitForConnexion();
             axios
                 .post(`${API_URL}/getQRCode`, {
                     appName: this.options.appName,
                     logo: this.options.logo,
                     scope: scope,
-                    clientId: this.clientId
+                    clientId
                 })
                 .then((resp: AxiosResponse) => {
                     resolve(resp.data);
@@ -60,20 +64,20 @@ export class Client {
         });
     }
 
+    waitForConnexion(): Promise<string> {
+        return new Promise((resolve, reject) => {
+            this.socket.on('xact.connexion', (clientId: string) => {
+                resolve(clientId);
+            });
+        })
+    }
+
     /* Receive connexion from users */
     connect() {
         const subject = new Subject<UserAccount>();
         const obs: Observable<UserAccount> = subject.asObservable();
 
-        const socket = io(SOCKET_URL, {
-            transports: ['websocket']
-        });
-
-        socket.on('xact.connexion', (clientId: string) => {
-            this.clientId = clientId;
-        });
-
-        socket.on('xact.auth', (user: UserAccount) => {
+        this.socket.on('xact.auth', (user: UserAccount) => {
             subject.next(user);
         });
 
