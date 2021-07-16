@@ -63,7 +63,9 @@ export class Client {
         const subject = new Subject<UserAccount>();
         const obs: Observable<UserAccount> = subject.asObservable();
 
-        const socket = io(SOCKET_URL);
+        const socket = io(SOCKET_URL, {
+            transports: ['websocket']
+        });
         socket.on('xact.auth', (user: UserAccount) => {
             subject.next(user);
         });
