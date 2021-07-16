@@ -78,6 +78,7 @@ export class Client {
         const obs: Observable<UserAccount> = subject.asObservable();
 
         this.socket.on('xact.auth', (clientId, user: UserAccount) => {
+            console.log('internal::sdk::', user);
             subject.next(user);
         });
 
