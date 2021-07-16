@@ -24,11 +24,13 @@ const generateQrCode = async () => {
 }
 
 /* Get new Connexions */
-const connectHandler = async () => {
+const connectHandler = () => {
     client.connect().subscribe((connexion: UserAccount) => {
         console.log('new connexion', connexion);
     });
 }
+connectHandler();
+await generateQrCode();
 
 ```
 

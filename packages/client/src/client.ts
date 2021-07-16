@@ -37,6 +37,7 @@ export enum ScopeEnum {
 
 export class Client {
     options;
+    clientId: string;
 
     constructor(options: ClientOptions) {
         this.options = options;
@@ -49,7 +50,8 @@ export class Client {
                 .post(`${API_URL}/getQRCode`, {
                     appName: this.options.appName,
                     logo: this.options.logo,
-                    scope: scope
+                    scope: scope,
+                    clientId: this.clientId
                 })
                 .then((resp: AxiosResponse) => {
                     resolve(resp.data);
@@ -66,6 +68,11 @@ export class Client {
         const socket = io(SOCKET_URL, {
             transports: ['websocket']
         });
+
+        socket.on('xact.connexion', (clientId: string) => {
+            this.clientId = clientId;
+        });
+
         socket.on('xact.auth', (user: UserAccount) => {
             subject.next(user);
         });
