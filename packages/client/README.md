@@ -34,4 +34,4 @@ const connectHandler = async () => {
 
 ## Example
 
-Github Example : <https://github.com/schnouz/xact-wallet-sdk/tree/master/integration>
+Github Example : <https://github.com/schnouz/xact-sdk/tree/master/integration>
